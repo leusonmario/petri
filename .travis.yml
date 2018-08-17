@@ -1,8 +1,25 @@
+
+sudo: required
 language: java
-before_install:
-    - export TZ=UTC
-script: mvn clean verify
-notifications:
-  email:
-    - talyag@wix.com
-    - dalias@wix.com
+
+jdk:
+  - oraclejdk8
+
+script:
+  - mvn clean cobertura:cobertura -Dtest=LaboratoryIT#conductsExperimentAndReportIt -DfailIfNoTests=false
+
+before_deploy:
+- tar -zcvf coverage-result.tar.gz /home/travis/build/leusonmario/petri/target/site/cobertura
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "3su2yB9zgCHMHe0hauR4z5xPWp989stJ3H7kUAy/jOoDFjlQgm+zDGH8t4zUuNb+ZxuMHbaoQXfrkp9T7zogLRyRlxEWBJjnFj512J0ZS7n+t98a+YU5DOjDTCGCoB75CUSRztvWjaYIVPBWToeaGcDhG867h1tVm/au8jvufRV5eKKWpjB0+p9h6LHfNfEpYEapuZmFFnlTlHBw4CLaUwlJEp72mmd3BTwjStK3duGVFgt81St01uzlGKR3XqDpMp3Ea060LbmMgwJpqHpOhYoG+gSFK2RnMGPLPNn4kL9n2yLXyb370D2a4LI93QH9dQsRgu/Sk/hjvKWz0GOw2c3nSX2CjeI/GUiZZnX73Bx2KKUQHTwS3gUWm/+/CUg79Gmdgm0qIOTt0agcXNUEg+U8Hn+Js3psxnlNmW5qs3f2ykDUvEkDzl0URerE/7lragVVWUDZ0fs84XJL1bY8k5LiNOrg8+L54U4qYXjiHC43kh+xfxRbLuiz//k1U0CsN7dqqhScbUmEIUImMuxkHYH2Mcf4EgmQxhcSDUdcD2jRKcm3t47LcjuI3d2Rk5b/OrtAAiErJWF0BwKAkJXDom3iz4hILBimSCNfP1m6M5EEgMvwuZyVMBPM0uKicOXX1hPDWoqFFtfwj9D4h0sjHYDvuau/lsSZvFBIUw5s0Ag="
+
+
+  file: coverage-result.tar.gz
+  file_glob: true
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: true
